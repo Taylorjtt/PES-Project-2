@@ -1972,7 +1972,7 @@ OUTPUT(Project_2.axf elf32-littlearm)
  .debug_line    0x000047f2      0x3a4 ./src/LED/RGB.o
  .debug_line    0x00004b96       0x57 ./src/semihost_hardfault.o
 
-.debug_str      0x00000000    0x35ff3
+.debug_str      0x00000000    0x36012
  .debug_str     0x00000000    0x3153a ./board/board.o
                               0x3175a (size before relaxing)
  .debug_str     0x0003153a      0x82c ./board/clock_config.o
@@ -1995,13 +1995,13 @@ OUTPUT(Project_2.axf elf32-littlearm)
                                0x31db (size before relaxing)
  .debug_str     0x000351d5      0x78d ./utilities/fsl_debug_console.o
                               0x31847 (size before relaxing)
- .debug_str     0x00035962       0xd1 ./src/main.o
-                              0x31a82 (size before relaxing)
- .debug_str     0x00035a33      0x52f ./src/mtb.o
+ .debug_str     0x00035962       0xd5 ./src/main.o
+                              0x31a86 (size before relaxing)
+ .debug_str     0x00035a37      0x52f ./src/mtb.o
                                0x32e4 (size before relaxing)
- .debug_str     0x00035f62       0x75 ./src/LED/RGB.o
-                              0x30705 (size before relaxing)
- .debug_str     0x00035fd7       0x1c ./src/semihost_hardfault.o
+ .debug_str     0x00035f66       0x90 ./src/LED/RGB.o
+                              0x30724 (size before relaxing)
+ .debug_str     0x00035ff6       0x1c ./src/semihost_hardfault.o
                                0x2dd1 (size before relaxing)
 
 .comment        0x00000000       0x75

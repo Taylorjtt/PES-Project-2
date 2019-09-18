@@ -24,21 +24,22 @@
 #define BLUE_BASE GPIOD
 #define BLUE_PIN 1U
 
+//define objects
+RGBLEDHandle rgbLED;
+
 int main(void)
 {
+	//initialization
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
     BOARD_InitDebugConsole();
 
-    RGBLEDHandle rgbLED = malloc(sizeof(RGBLEDObject));
-
+    //initialize the RGB LED object
+    rgbLED = malloc(sizeof(RGBLEDObject));
     rgbLED = RGBLED_Constructor((void*) rgbLED, sizeof(RGBLEDObject), RED_BASE, RED_PIN, GREEN_BASE, GREEN_PIN, BLUE_BASE, BLUE_PIN);
 
     RGBLED_set(rgbLED, true, true, false);
-
-    PRINTF("Hello World\n");
-
 
     return 0 ;
 }

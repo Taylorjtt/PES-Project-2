@@ -17,6 +17,10 @@
    </preferences>
    <tools>
       <pins name="Pins" version="6.0" enabled="true" update_project_code="true">
+         <generated_project_files>
+            <file path="board/pin_mux.c" update_enabled="true"/>
+            <file path="board/pin_mux.h" update_enabled="true"/>
+         </generated_project_files>
          <pins_profile>
             <processor_version>6.0.0</processor_version>
          </pins_profile>
@@ -30,6 +34,11 @@
                </options>
                <dependencies>
                   <dependency resourceType="Peripheral" resourceId="UART0" description="Peripheral UART0 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="RTC" description="Peripheral RTC is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
                      <feature name="initialized" evaluation="equal">
                         <data>true</data>
                      </feature>
@@ -69,11 +78,17 @@
                         <pin_feature name="direction" value="OUTPUT"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="RTC" signal="CLKIN" pin_num="56" pin_signal="ADC0_SE15/TSI0_CH14/PTC1/LLWU_P6/RTC_CLKIN/I2C1_SCL/TPM0_CH0"/>
+                  <pin peripheral="RTC" signal="CLKOUT" pin_num="1" pin_signal="PTE0/UART1_TX/RTC_CLKOUT/CMP0_OUT/I2C1_SDA"/>
                </pins>
             </function>
          </functions_list>
       </pins>
       <clocks name="Clocks" version="6.0" enabled="true" update_project_code="true">
+         <generated_project_files>
+            <file path="board/clock_config.c" update_enabled="true"/>
+            <file path="board/clock_config.h" update_enabled="true"/>
+         </generated_project_files>
          <clocks_profile>
             <processor_version>6.0.0</processor_version>
          </clocks_profile>
@@ -192,12 +207,14 @@
          </clock_configurations>
       </clocks>
       <dcdx name="DCDx" version="2.0" enabled="false" update_project_code="true">
+         <generated_project_files/>
          <dcdx_profile>
             <processor_version>N/A</processor_version>
          </dcdx_profile>
          <dcdx_configurations/>
       </dcdx>
       <periphs name="Peripherals" version="6.0" enabled="false" update_project_code="true">
+         <generated_project_files/>
          <peripherals_profile>
             <processor_version>N/A</processor_version>
          </peripherals_profile>
@@ -205,6 +222,7 @@
          <components/>
       </periphs>
       <tee name="TEE" version="1.0" enabled="false" update_project_code="true">
+         <generated_project_files/>
          <tee_profile>
             <processor_version>N/A</processor_version>
          </tee_profile>

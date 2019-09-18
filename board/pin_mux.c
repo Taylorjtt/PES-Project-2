@@ -44,6 +44,8 @@ BOARD_InitPins:
   - {pin_num: '74', peripheral: GPIOD, signal: 'GPIO, 1', pin_signal: ADC0_SE5b/PTD1/SPI0_SCK/TPM0_CH1, direction: OUTPUT, gpio_init_state: 'false'}
   - {pin_num: '54', peripheral: GPIOB, signal: 'GPIO, 19', pin_signal: TSI0_CH12/PTB19/TPM2_CH1, direction: OUTPUT}
   - {pin_num: '53', peripheral: GPIOB, signal: 'GPIO, 18', pin_signal: TSI0_CH11/PTB18/TPM2_CH0, direction: OUTPUT}
+  - {pin_num: '56', peripheral: RTC, signal: CLKIN, pin_signal: ADC0_SE15/TSI0_CH14/PTC1/LLWU_P6/RTC_CLKIN/I2C1_SCL/TPM0_CH0}
+  - {pin_num: '1', peripheral: RTC, signal: CLKOUT, pin_signal: PTE0/UART1_TX/RTC_CLKOUT/CMP0_OUT/I2C1_SDA}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -60,8 +62,12 @@ void BOARD_InitPins(void)
     CLOCK_EnableClock(kCLOCK_PortA);
     /* Port B Clock Gate Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortB);
+    /* Port C Clock Gate Control: Clock enabled */
+    CLOCK_EnableClock(kCLOCK_PortC);
     /* Port D Clock Gate Control: Clock enabled */
     CLOCK_EnableClock(kCLOCK_PortD);
+    /* Port E Clock Gate Control: Clock enabled */
+    CLOCK_EnableClock(kCLOCK_PortE);
 
     gpio_pin_config_t LED_RED_config = {
         .pinDirection = kGPIO_DigitalOutput,
@@ -96,8 +102,14 @@ void BOARD_InitPins(void)
     /* PORTB19 (pin 54) is configured as PTB19 */
     PORT_SetPinMux(BOARD_INITPINS_LED_GREEN_PORT, BOARD_INITPINS_LED_GREEN_PIN, kPORT_MuxAsGpio);
 
+    /* PORTC1 (pin 56) is configured as RTC_CLKIN */
+    PORT_SetPinMux(PORTC, 1U, kPORT_MuxAsGpio);
+
     /* PORTD1 (pin 74) is configured as PTD1 */
     PORT_SetPinMux(BOARD_INITPINS_LED_BLUE_PORT, BOARD_INITPINS_LED_BLUE_PIN, kPORT_MuxAsGpio);
+
+    /* PORTE0 (pin 1) is configured as RTC_CLKOUT */
+    PORT_SetPinMux(PORTE, 0U, kPORT_MuxAlt4);
 
     SIM->SOPT5 = ((SIM->SOPT5 &
                    /* Mask bits to zero which are setting */

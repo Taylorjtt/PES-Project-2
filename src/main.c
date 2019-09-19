@@ -40,6 +40,7 @@ const uint16_t timing[TIMING_ARRAY_SIZE] = {3000,1000,2000,600,1000,400,1000,200
 //define objects
 RGBLEDHandle rgbLED;
 
+//variables to keep track of LED status
 bool red = true;
 bool green = false;
 bool blue = false;
@@ -80,23 +81,29 @@ int main(void)
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
     BOARD_InitDebugConsole();
+
+
     initializeTouch();
+
+    //set the offset value when the board isn't being touched (hopefully)
     touchOffset = getTouchValue();
+
     /*
      * The board is running at 48MZ therfore 12000 ticks equals 0.25 millisecond
      */
     SysTick_Config(12000);
-    PRINTF("HELLO WORLD");
 
     //initialize the RGB LED object
     rgbLED = malloc(sizeof(RGBLEDObject));
     rgbLED = RGBLED_Constructor((void*) rgbLED, sizeof(RGBLEDObject), RED_BASE, RED_PIN, GREEN_BASE, GREEN_PIN, BLUE_BASE, BLUE_PIN);
 
+    // run the process TIMES_TO_RUN times
     for(int i = 0; i < TIMES_TO_RUN; i++)
     {
+    	// loop through the timing array
     	for(int j = 0; j < TIMING_ARRAY_SIZE; j++)
     	{
-    		//if j is even
+    		//if j is even, turn the LED on
     		if(j % 2 == 0)
     		{
     			RGBLED_set(rgbLED, red, green, blue);

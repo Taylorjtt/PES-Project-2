@@ -12,7 +12,9 @@
 #include "clock_config.h"
 #include "MKL25Z4.h"
 #include "fsl_debug_console.h"
+
 #include "LED/RGB.h"
+#include "TSS/touch.h"
 #include <stdlib.h>
 
 
@@ -38,12 +40,38 @@ const uint16_t timing[TIMING_ARRAY_SIZE] = {3000,1000,2000,600,1000,400,1000,200
 //define objects
 RGBLEDHandle rgbLED;
 
+bool red = true;
+bool green = false;
+bool blue = false;
+
 float seconds = 0.0;
+int32_t touchOffset = 0;
 
 void delay_ms(float delayInMilliseconds)
 {
 	float entryTime = seconds;
-	while(seconds - entryTime < delayInMilliseconds/1e3);
+	while(seconds - entryTime < delayInMilliseconds/1e3)
+	{
+		TOUCH_SECTION section = getSection();
+		if(section == LEFT)
+		{
+			red = true;
+			green = false;
+			blue = false;
+		}
+		else if (section == MIDDLE)
+		{
+			red = false;
+			green = true;
+			blue = false;
+		}
+		else if (section == RIGHT)
+		{
+			red = false;
+			green = false;
+			blue = true;
+		}
+	}
 }
 int main(void)
 {
@@ -52,11 +80,13 @@ int main(void)
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
     BOARD_InitDebugConsole();
-
+    initializeTouch();
+    touchOffset = getTouchValue();
     /*
      * The board is running at 48MZ therfore 12000 ticks equals 0.25 millisecond
      */
     SysTick_Config(12000);
+    PRINTF("HELLO WORLD");
 
     //initialize the RGB LED object
     rgbLED = malloc(sizeof(RGBLEDObject));
@@ -69,7 +99,7 @@ int main(void)
     		//if j is even
     		if(j % 2 == 0)
     		{
-    			RGBLED_set(rgbLED, true, false, false);
+    			RGBLED_set(rgbLED, red, green, blue);
     		}
     		else
     		{
@@ -78,6 +108,7 @@ int main(void)
     		delay_ms(timing[j]);
     	}
     }
+
 
 
     return 0 ;

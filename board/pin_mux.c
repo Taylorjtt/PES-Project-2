@@ -46,6 +46,8 @@ BOARD_InitPins:
   - {pin_num: '53', peripheral: GPIOB, signal: 'GPIO, 18', pin_signal: TSI0_CH11/PTB18/TPM2_CH0, direction: OUTPUT}
   - {pin_num: '56', peripheral: RTC, signal: CLKIN, pin_signal: ADC0_SE15/TSI0_CH14/PTC1/LLWU_P6/RTC_CLKIN/I2C1_SCL/TPM0_CH0}
   - {pin_num: '1', peripheral: RTC, signal: CLKOUT, pin_signal: PTE0/UART1_TX/RTC_CLKOUT/CMP0_OUT/I2C1_SDA}
+  - {pin_num: '51', peripheral: TSI0, signal: 'CH, 9', pin_signal: TSI0_CH9/PTB16/SPI1_MOSI/UART0_RX/TPM_CLKIN0/SPI1_MISO}
+  - {pin_num: '52', peripheral: TSI0, signal: 'CH, 10', pin_signal: TSI0_CH10/PTB17/SPI1_MISO/UART0_TX/TPM_CLKIN1/SPI1_MOSI}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -95,6 +97,12 @@ void BOARD_InitPins(void)
 
     /* PORTA2 (pin 28) is configured as UART0_TX */
     PORT_SetPinMux(BOARD_INITPINS_DEBUG_UART_TX_PORT, BOARD_INITPINS_DEBUG_UART_TX_PIN, kPORT_MuxAlt2);
+
+    /* PORTB16 (pin 51) is configured as TSI0_CH9 */
+    PORT_SetPinMux(BOARD_INITPINS_TSI_ELECTRODE_1_PORT, BOARD_INITPINS_TSI_ELECTRODE_1_PIN, kPORT_PinDisabledOrAnalog);
+
+    /* PORTB17 (pin 52) is configured as TSI0_CH10 */
+    PORT_SetPinMux(BOARD_INITPINS_TSI_ELECTRODE_2_PORT, BOARD_INITPINS_TSI_ELECTRODE_2_PIN, kPORT_PinDisabledOrAnalog);
 
     /* PORTB18 (pin 53) is configured as PTB18 */
     PORT_SetPinMux(BOARD_INITPINS_LED_RED_PORT, BOARD_INITPINS_LED_RED_PIN, kPORT_MuxAsGpio);

@@ -34,7 +34,8 @@ C_SRCS += \
 ../drivers/fsl_lpsci.c \
 ../drivers/fsl_rtc.c \
 ../drivers/fsl_smc.c \
-../drivers/fsl_uart.c 
+../drivers/fsl_uart.c \
+../drivers/fsl_tsi_v4.c 
 
 OBJS += \
 ./drivers/fsl_clock.o \
@@ -44,7 +45,8 @@ OBJS += \
 ./drivers/fsl_lpsci.o \
 ./drivers/fsl_rtc.o \
 ./drivers/fsl_smc.o \
-./drivers/fsl_uart.o 
+./drivers/fsl_uart.o \
+./drivers/fsl_tsi_v4.o
 
 C_DEPS += \
 ./drivers/fsl_clock.d \
@@ -54,7 +56,8 @@ C_DEPS += \
 ./drivers/fsl_lpsci.d \
 ./drivers/fsl_rtc.d \
 ./drivers/fsl_smc.d \
-./drivers/fsl_uart.d 
+./drivers/fsl_uart.d \
+./drivers/fsl_tsi_v4.d
 
 C_SRCS += \
 ../startup/startup_mkl25z4.c 
@@ -77,6 +80,7 @@ C_DEPS += \
 C_SRCS += \
 ../src/main.c \
 ../src/LED/RGB.c \
+../src/TSS/touch.c \
 ../src/mtb.c \
 ../src/semihost_hardfault.c 
 
@@ -84,11 +88,13 @@ OBJS += \
 ./src/main.o \
 ./src/mtb.o \
 ./src/LED/RGB.o \
+./src/TSS/touch.o \
 ./src/semihost_hardfault.o 
 
 C_DEPS += \
 ./src/main.d \
 ./src/LED/RGB.d \
+./src/TSS/touch.d \
 ./src/mtb.d \
 ./src/semihost_hardfault.d 
 

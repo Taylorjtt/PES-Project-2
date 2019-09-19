@@ -36,12 +36,7 @@
 //timing array in milliseconds
 const uint16_t timing[TIMING_ARRAY_SIZE] = {3000,1000,2000,600,1000,400,1000,200,500,100,500,100,500,100,1000,200,1000,400,2000,600};
 
-typedef struct clock
-{
-	uint16_t hours;
-	uint16_t minutes;
-	uint16_t seconds;
-};
+
 //define objects
 RGBLEDHandle rgbLED;
 
@@ -57,17 +52,22 @@ bool blue = false;
 	bool debug = false;
 #endif
 
+//microseconds
+uint32_t usecs = 0U;
 
-float seconds = 0.0f;
-float debugDelta = 0.0f;
-float lastDebugTime = 0.0f;
+//time between debug prints
+uint32_t debugDelta = 0U;
 
+//the last time, in microseconds we were in the debug loop
+uint32_t lastDebugTime = 0U;
+
+//offset for the touch sensor
 int32_t touchOffset = 0;
 
 void printDebug(bool on)
 {
-	debugDelta = seconds - lastDebugTime;
-	lastDebugTime = seconds;
+	debugDelta = usecs - lastDebugTime;
+	lastDebugTime = usecs;
 
 	if(debug)
 	{
@@ -86,18 +86,18 @@ void printDebug(bool on)
 
 		if(on)
 		{
-			PRINTF(" ON\t%.0f\r\n",debugDelta*1000);
+			PRINTF(" ON\t%d\r\n",debugDelta/1000);
 		}
 		else
 		{
-			PRINTF(" OFF\t%.0f\r\n",debugDelta*1000);
+			PRINTF(" OFF\t%d\r\n",debugDelta/1000);
 		}
 	}
 }
-void delay_ms(float delayInMilliseconds)
+void delay_ms(uint32_t delayInMilliseconds)
 {
-	float entryTime = seconds;
-	while(seconds - entryTime < delayInMilliseconds/1e3)
+	uint32_t entryTime = usecs;
+	while(usecs - entryTime < delayInMilliseconds*1000)
 	{
 		TOUCH_SECTION section = getSection();
 		if(section == LEFT)
@@ -135,9 +135,9 @@ int main(void)
     touchOffset = getTouchValue();
 
     /*
-     * The board is running at 48MZ therfore 12000 ticks equals 0.25 millisecond
+     * The board is running at 48MZ therefore 480 ticks equals 10 microsecond
      */
-    SysTick_Config(3000);
+    SysTick_Config(480);
 
     //initialize the RGB LED object
     rgbLED = malloc(sizeof(RGBLEDObject));
@@ -155,7 +155,7 @@ int main(void)
     			RGBLED_set(rgbLED, red, green, blue);
     			printDebug(true);
     		}
-    		else
+    		else //if j is odd turn the LEDS off
     		{
     			RGBLED_set(rgbLED, false, false, false);
     			printDebug(false);
@@ -164,14 +164,12 @@ int main(void)
     	}
     }
 
-
-
     return 0 ;
 }
 
 void SysTick_Handler(void)
 {
-	//add a quarter of a millisecond to the seconds count
-	seconds += 0.000063;
+	//10 microseconds per tick
+	usecs += 10;
 }
 

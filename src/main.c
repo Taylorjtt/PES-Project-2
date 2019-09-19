@@ -36,7 +36,12 @@
 //timing array in milliseconds
 const uint16_t timing[TIMING_ARRAY_SIZE] = {3000,1000,2000,600,1000,400,1000,200,500,100,500,100,500,100,1000,200,1000,400,2000,600};
 
-
+typedef struct clock
+{
+	uint16_t hours;
+	uint16_t minutes;
+	uint16_t seconds;
+};
 //define objects
 RGBLEDHandle rgbLED;
 
@@ -45,9 +50,50 @@ bool red = true;
 bool green = false;
 bool blue = false;
 
-float seconds = 0.0;
+
+#ifdef DB
+	bool debug = true;
+#else
+	bool debug = false;
+#endif
+
+
+float seconds = 0.0f;
+float debugDelta = 0.0f;
+float lastDebugTime = 0.0f;
+
 int32_t touchOffset = 0;
 
+void printDebug(bool on)
+{
+	debugDelta = seconds - lastDebugTime;
+	lastDebugTime = seconds;
+
+	if(debug)
+	{
+		if(red)
+		{
+			PRINTF("RED LED");
+		}
+		else if (green)
+		{
+			PRINTF("GREEN LED");
+		}
+		else if (blue)
+		{
+			PRINTF("BLUE LED");
+		}
+
+		if(on)
+		{
+			PRINTF(" ON\t%.0f\r\n",debugDelta*1000);
+		}
+		else
+		{
+			PRINTF(" OFF\t%.0f\r\n",debugDelta*1000);
+		}
+	}
+}
 void delay_ms(float delayInMilliseconds)
 {
 	float entryTime = seconds;
@@ -74,6 +120,7 @@ void delay_ms(float delayInMilliseconds)
 		}
 	}
 }
+
 int main(void)
 {
 	//initialization
@@ -81,7 +128,6 @@ int main(void)
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
     BOARD_InitDebugConsole();
-
 
     initializeTouch();
 
@@ -91,7 +137,7 @@ int main(void)
     /*
      * The board is running at 48MZ therfore 12000 ticks equals 0.25 millisecond
      */
-    SysTick_Config(12000);
+    SysTick_Config(3000);
 
     //initialize the RGB LED object
     rgbLED = malloc(sizeof(RGBLEDObject));
@@ -107,10 +153,12 @@ int main(void)
     		if(j % 2 == 0)
     		{
     			RGBLED_set(rgbLED, red, green, blue);
+    			printDebug(true);
     		}
     		else
     		{
     			RGBLED_set(rgbLED, false, false, false);
+    			printDebug(false);
     		}
     		delay_ms(timing[j]);
     	}
@@ -124,6 +172,6 @@ int main(void)
 void SysTick_Handler(void)
 {
 	//add a quarter of a millisecond to the seconds count
-	seconds += 0.25e-3;
+	seconds += 0.000063;
 }
 

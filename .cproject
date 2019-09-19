@@ -114,6 +114,15 @@
 &lt;/infoList&gt;&#13;
 &lt;/TargetConfig&gt;</projectStorage>
 	</storageModule>
+	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
+		<sdkName>SDK_2.x_FRDM-KL25Z</sdkName>
+		<sdkVersion>2.2.0</sdkVersion>
+	</storageModule>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/Project_2"/>
+		</configuration>
+	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 		<buildTargets>
 			<target name="clean" path="debug" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
@@ -124,23 +133,22 @@
 				<useDefaultCommand>true</useDefaultCommand>
 				<runAllBuilders>true</runAllBuilders>
 			</target>
-			<target name="all" path="debug" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+			<target name="fb_debug" path="debug" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>make</buildCommand>
 				<buildArguments>-r -j12</buildArguments>
-				<buildTarget>all</buildTarget>
+				<buildTarget>fb_debug</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="fb_run" path="debug" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments>-r -j12</buildArguments>
+				<buildTarget>fb_run</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>true</useDefaultCommand>
 				<runAllBuilders>true</runAllBuilders>
 			</target>
 		</buildTargets>
-	</storageModule>
-	<storageModule moduleId="com.nxp.mcuxpresso.core.datamodels">
-		<sdkName>SDK_2.x_FRDM-KL25Z</sdkName>
-		<sdkVersion>2.2.0</sdkVersion>
-	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Debug">
-			<resource resourceType="PROJECT" workspacePath="/Project_2"/>
-		</configuration>
 	</storageModule>
 </cproject>

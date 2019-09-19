@@ -102,7 +102,9 @@ CC = arm-none-eabi-gcc
 LL = arm-none-eabi-gcc
 
 PRE = -D__REDLIB__ -DCPU_MKL25Z128VLK4 -DCPU_MKL25Z128VLK4_cm0plus -DSDK_OS_BAREMETAL -DFSL_RTOS_BM -DSDK_DEBUGCONSOLE=0 -DPRINTF_FLOAT_ENABLE=1 -DSDK_DEBUGCONSOLE_UART -D__MCUXPRESSO -D__USE_CMSIS -DDEBUG
-
+INC = -I../board -I../src -I../ -I../drivers -I../CMSIS -I../utilities -I../startup
+CFLG = -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m0plus -mthumb -D__REDLIB__ -fstack-usage -specs=redlib.specs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)"
+LFLG = -nostdlib -Xlinker -Map="Project_2.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m0plus -mthumb -T linkerfile.ld
 # fb_debug Target
 fb_debug: CC += -DDB
 fb_debug: Project_2.axf 
@@ -116,7 +118,7 @@ fb_run: Project_2.axf
 Project_2.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	$(LL) -nostdlib -Xlinker -Map="Project_2.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m0plus -mthumb -T linkerfile.ld -o "Project_2.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	$(LL) $(LFLG) -o "Project_2.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
@@ -124,49 +126,49 @@ Project_2.axf: $(OBJS) $(USER_OBJS)
 startup/%.o: ../startup/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU C Compiler'
-	$(CC) $(PRE) -I../board -I../src -I../ -I../drivers -I../CMSIS -I../utilities -I../startup -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m0plus -mthumb -D__REDLIB__ -fstack-usage -specs=redlib.specs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	$(CC) $(PRE) $(INC) $(CFLG) -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 	
 src/%.o: ../src/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU C Compiler'
-	$(CC) $(PRE) -I../board -I../src -I../ -I../drivers -I../CMSIS -I../utilities -I../startup -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m0plus -mthumb -D__REDLIB__ -fstack-usage -specs=redlib.specs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	$(CC) $(PRE) $(INC) $(CFLG)  -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 	
 src/LED/%.o: ../src/LED/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU C Compiler'
-	$(CC) $(PRE) -I../board -I../src -I../ -I../drivers -I../CMSIS -I../utilities -I../startup -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m0plus -mthumb -D__REDLIB__ -fstack-usage -specs=redlib.specs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	$(CC) $(PRE) $(INC) $(CFLG)  -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 CMSIS/%.o: ../CMSIS/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU C Compiler'
-	$(CC) $(PRE) -I../board -I../src -I../ -I../drivers -I../CMSIS -I../utilities -I../startup -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m0plus -mthumb -D__REDLIB__ -fstack-usage -specs=redlib.specs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	$(CC) $(PRE) $(INC) $(CFLG)  -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 utilities/%.o: ../utilities/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU C Compiler'
-	$(CC) $(PRE) -I../board -I../src -I../ -I../drivers -I../CMSIS -I../utilities -I../startup -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m0plus -mthumb -D__REDLIB__ -fstack-usage -specs=redlib.specs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	$(CC) $(PRE) $(INC) $(CFLG)  -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 board/%.o: ../board/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU C Compiler'
-	$(CC) $(PRE) -I../board -I../src -I../ -I../drivers -I../CMSIS -I../utilities -I../startup -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m0plus -mthumb -D__REDLIB__ -fstack-usage -specs=redlib.specs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	$(CC) $(PRE) $(INC) $(CFLG)  -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
 drivers/%.o: ../drivers/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU C Compiler'
-	$(CC) $(PRE) -I../board -I../src -I../ -I../drivers -I../CMSIS -I../utilities -I../startup -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m0plus -mthumb -D__REDLIB__ -fstack-usage -specs=redlib.specs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	$(CC) $(PRE) $(INC) $(CFLG) -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 clean:
@@ -176,7 +178,7 @@ clean:
 
 post-build:
 	-@echo 'Performing post-build steps'
-	-arm-none-eabi-size "Project_2.axf"; # arm-none-eabi-objcopy -v -O binary "PES_Project_2.axf" "PES_Project_2.bin" ; # checksum -p MKL25Z128xxx4 -d "PES_Project_2.bin";
+	-arm-none-eabi-size "Project_2.axf"; 
 	-@echo ' '
 
 .PHONY: all clean dependents post-build

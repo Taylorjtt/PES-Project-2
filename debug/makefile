@@ -59,8 +59,22 @@ fb_debug: Project_2.axf
 
 # fb_run Target
 fb_run: Project_2.axf
- 
- 
+
+pc_run: PRE = 
+pc_run: CFLG =
+pc_run: LFLG =
+pc_run: CC = gcc
+pc_run: LL = gcc
+pc_run: Project_2.o
+
+# Tool invocations
+Project_2.o: $(OBJS) $(USER_OBJS)
+	@echo 'Building target: $@'
+	@echo 'Invoking: MCU Linker'
+	$(LL) $(LFLG) -o "Project_2.o" $(OBJS) $(USER_OBJS) $(LIBS)
+	@echo 'Finished building target: $@'
+	@echo ' '
+	$(MAKE) --no-print-directory post-build
 
 # Tool invocations
 Project_2.axf: $(OBJS) $(USER_OBJS)

@@ -48,6 +48,11 @@
                         <data>true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="Peripheral" resourceId="SIM" description="Peripheral SIM is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
                   <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
                      <feature name="enabled" evaluation="equal" configuration="core0">
                         <data>true</data>
@@ -87,6 +92,7 @@
                   <pin peripheral="RTC" signal="CLKOUT" pin_num="1" pin_signal="PTE0/UART1_TX/RTC_CLKOUT/CMP0_OUT/I2C1_SDA"/>
                   <pin peripheral="TSI0" signal="CH, 9" pin_num="51" pin_signal="TSI0_CH9/PTB16/SPI1_MOSI/UART0_RX/TPM_CLKIN0/SPI1_MISO"/>
                   <pin peripheral="TSI0" signal="CH, 10" pin_num="52" pin_signal="TSI0_CH10/PTB17/SPI1_MISO/UART0_TX/TPM_CLKIN1/SPI1_MOSI"/>
+                  <pin peripheral="SIM" signal="CLKOUT" pin_num="58" pin_signal="PTC3/LLWU_P7/UART1_RX/TPM0_CH2/CLKOUTa"/>
                </pins>
             </function>
          </functions_list>
@@ -124,7 +130,22 @@
                         <data>OUTPUT</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="PinSignal" resourceId="SIM.rtc_clkin" description="&apos;RTC_CLKIN&apos; (Pins tool id: SIM.rtc_clkin, Clocks tool id: SIM.RTC_CLKIN) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PinSignal" resourceId="SIM.rtc_clkin" description="&apos;RTC_CLKIN&apos; (Pins tool id: SIM.rtc_clkin, Clocks tool id: SIM.RTC_CLKIN) needs to have &apos;INPUT&apos; direction" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="direction" evaluation="">
+                        <data>INPUT</data>
+                     </feature>
+                  </dependency>
                   <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Clocks initialization requires the COMMON Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.rtc" description="Clocks initialization requires the RTC Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
                      <feature name="enabled" evaluation="equal" configuration="core0">
                         <data>true</data>
                      </feature>
@@ -132,11 +153,13 @@
                </dependencies>
                <clock_sources>
                   <clock_source id="OSC.OSC.outFreq" value="8 MHz" locked="false" enabled="true"/>
+                  <clock_source id="SIM.RTC_CLK_EXT_IN.outFreq" value="32.768 kHz" locked="false" enabled="true"/>
                </clock_sources>
                <clock_outputs>
                   <clock_output id="Bus_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CLKOUT.outFreq" value="32.768 kHz" locked="false" accuracy=""/>
                   <clock_output id="Core_clock.outFreq" value="48 MHz" locked="true" accuracy="0.001"/>
-                  <clock_output id="ERCLK32K.outFreq" value="1 kHz" locked="false" accuracy=""/>
+                  <clock_output id="ERCLK32K.outFreq" value="32.768 kHz" locked="false" accuracy=""/>
                   <clock_output id="Flash_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="1 kHz" locked="false" accuracy=""/>
                   <clock_output id="MCGIRCLK.outFreq" value="32.768 kHz" locked="false" accuracy=""/>
@@ -146,6 +169,7 @@
                </clock_outputs>
                <clock_settings>
                   <setting id="MCGMode" value="PEE" locked="false"/>
+                  <setting id="CLKOUTConfig" value="yes" locked="false"/>
                   <setting id="MCG.FCRDIV.scale" value="1" locked="true"/>
                   <setting id="MCG.FRDIV.scale" value="32" locked="false"/>
                   <setting id="MCG.IREFS.sel" value="MCG.FRDIV" locked="false"/>
@@ -158,8 +182,9 @@
                   <setting id="MCG_C2_RANGE0_FRDIV_CFG" value="High" locked="false"/>
                   <setting id="OSC0_CR_ERCLKEN_CFG" value="Enabled" locked="false"/>
                   <setting id="OSC_CR_ERCLKEN_CFG" value="Enabled" locked="false"/>
-                  <setting id="SIM.CLKOUTSEL.sel" value="SIM.OUTDIV4" locked="false"/>
-                  <setting id="SIM.OSC32KSEL.sel" value="PMC.LPOCLK" locked="false"/>
+                  <setting id="RTCClkConfig" value="yes" locked="false"/>
+                  <setting id="SIM.CLKOUTSEL.sel" value="MCG.MCGIRCLK" locked="false"/>
+                  <setting id="SIM.OSC32KSEL.sel" value="SIM.RTC_CLK_EXT_IN" locked="false"/>
                   <setting id="SIM.OUTDIV1.scale" value="2" locked="false"/>
                   <setting id="SIM.PLLFLLSEL.sel" value="SIM.MCGPLLCLK_DIV2" locked="false"/>
                   <setting id="SIM.TPMSRCSEL.sel" value="SIM.PLLFLLSEL" locked="false"/>

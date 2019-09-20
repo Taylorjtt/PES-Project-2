@@ -43,6 +43,7 @@ board: FRDM-KL25Z
 /* clang-format on */
 
 #include "fsl_smc.h"
+#include "fsl_rtc.h"
 #include "clock_config.h"
 
 /*******************************************************************************
@@ -51,7 +52,10 @@ board: FRDM-KL25Z
 #define MCG_PLL_DISABLE                                   0U  /*!< MCGPLLCLK disabled */
 #define OSC_CAP0P                                         0U  /*!< Oscillator 0pF capacitor load */
 #define OSC_ER_CLK_DISABLE                                0U  /*!< Disable external reference clock */
+#define RTC_CLKIN_32768HZ                             32768U  /*!< RTC_CLKIN frequency: 32768Hz */
+#define SIM_CLKOUT_SEL_MCGIRCLK_CLK                       4U  /*!< CLKOUT pin clock select: MCGIRCLK clock */
 #define SIM_OSC32KSEL_LPO_CLK                             3U  /*!< OSC32KSEL select: LPO clock */
+#define SIM_OSC32KSEL_RTC32KCLK_CLK                       2U  /*!< OSC32KSEL select: RTC32KCLK clock (32.768kHz) */
 #define SIM_PLLFLLSEL_MCGFLLCLK_CLK                       0U  /*!< PLLFLL select: MCGFLLCLK clock */
 #define SIM_PLLFLLSEL_MCGPLLCLK_CLK                       1U  /*!< PLLFLL select: MCGPLLCLK clock */
 
@@ -64,6 +68,24 @@ extern uint32_t SystemCoreClock;
 /*******************************************************************************
  * Code
  ******************************************************************************/
+/*FUNCTION**********************************************************************
+ *
+ * Function Name : CLOCK_CONFIG_SetRtcClock
+ * Description   : This function is used to configuring RTC clock
+ *
+ *END**************************************************************************/
+static void CLOCK_CONFIG_SetRtcClock()
+{
+    /* RTC clock gate enable */
+    CLOCK_EnableClock(kCLOCK_Rtc0);
+    /* Set RTC_TSR if there is fault value in RTC */
+    if (RTC->SR & RTC_SR_TIF_MASK) {
+        RTC -> TSR = RTC -> TSR;
+    }
+    /* RTC clock gate disable */
+    CLOCK_DisableClock(kCLOCK_Rtc0);
+}
+
 /*FUNCTION**********************************************************************
  *
  * Function Name : CLOCK_CONFIG_SetFllExtRefDiv
@@ -94,8 +116,9 @@ name: BOARD_BootClockRUN
 called_from_default_init: true
 outputs:
 - {id: Bus_clock.outFreq, value: 24 MHz}
+- {id: CLKOUT.outFreq, value: 32.768 kHz}
 - {id: Core_clock.outFreq, value: 48 MHz, locked: true, accuracy: '0.001'}
-- {id: ERCLK32K.outFreq, value: 1 kHz}
+- {id: ERCLK32K.outFreq, value: 32.768 kHz}
 - {id: Flash_clock.outFreq, value: 24 MHz}
 - {id: LPO_clock.outFreq, value: 1 kHz}
 - {id: MCGIRCLK.outFreq, value: 32.768 kHz}
@@ -104,6 +127,7 @@ outputs:
 - {id: System_clock.outFreq, value: 48 MHz}
 settings:
 - {id: MCGMode, value: PEE}
+- {id: CLKOUTConfig, value: 'yes'}
 - {id: MCG.FCRDIV.scale, value: '1', locked: true}
 - {id: MCG.FRDIV.scale, value: '32'}
 - {id: MCG.IREFS.sel, value: MCG.FRDIV}
@@ -116,8 +140,9 @@ settings:
 - {id: MCG_C2_RANGE0_FRDIV_CFG, value: High}
 - {id: OSC0_CR_ERCLKEN_CFG, value: Enabled}
 - {id: OSC_CR_ERCLKEN_CFG, value: Enabled}
-- {id: SIM.CLKOUTSEL.sel, value: SIM.OUTDIV4}
-- {id: SIM.OSC32KSEL.sel, value: PMC.LPOCLK}
+- {id: RTCClkConfig, value: 'yes'}
+- {id: SIM.CLKOUTSEL.sel, value: MCG.MCGIRCLK}
+- {id: SIM.OSC32KSEL.sel, value: SIM.RTC_CLK_EXT_IN}
 - {id: SIM.OUTDIV1.scale, value: '2'}
 - {id: SIM.PLLFLLSEL.sel, value: SIM.MCGPLLCLK_DIV2}
 - {id: SIM.TPMSRCSEL.sel, value: SIM.PLLFLLSEL}
@@ -125,6 +150,7 @@ settings:
 - {id: SIM.USBSRCSEL.sel, value: SIM.PLLFLLSEL}
 sources:
 - {id: OSC.OSC.outFreq, value: 8 MHz, enabled: true}
+- {id: SIM.RTC_CLK_EXT_IN.outFreq, value: 32.768 kHz, enabled: true}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 
@@ -150,7 +176,7 @@ const mcg_config_t mcgConfig_BOARD_BootClockRUN =
 const sim_clock_config_t simConfig_BOARD_BootClockRUN =
     {
         .pllFllSel = SIM_PLLFLLSEL_MCGPLLCLK_CLK, /* PLLFLL select: MCGPLLCLK clock */
-        .er32kSrc = SIM_OSC32KSEL_LPO_CLK,        /* OSC32KSEL select: LPO clock */
+        .er32kSrc = SIM_OSC32KSEL_RTC32KCLK_CLK,  /* OSC32KSEL select: RTC32KCLK clock (32.768kHz) */
         .clkdiv1 = 0x10010000U,                   /* SIM_CLKDIV1 - OUTDIV1: /2, OUTDIV4: /2 */
     };
 const osc_config_t oscConfig_BOARD_BootClockRUN =
@@ -169,6 +195,8 @@ const osc_config_t oscConfig_BOARD_BootClockRUN =
  ******************************************************************************/
 void BOARD_BootClockRUN(void)
 {
+    /* Use RTC_CLKIN input clock directly. */
+    CLOCK_SetXtal32Freq(RTC_CLKIN_32768HZ);
     /* Set the system clock dividers in SIM to safe value. */
     CLOCK_SetSimSafeDivs();
     /* Initializes OSC0 according to board configuration. */
@@ -186,8 +214,12 @@ void BOARD_BootClockRUN(void)
                                   mcgConfig_BOARD_BootClockRUN.fcrdiv);
     /* Set the clock configuration in SIM module. */
     CLOCK_SetSimConfig(&simConfig_BOARD_BootClockRUN);
+    /* Configure RTC clock. */
+    CLOCK_CONFIG_SetRtcClock();
     /* Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKRUN_CORE_CLOCK;
+    /* Set CLKOUT source. */
+    CLOCK_SetClkOutClock(SIM_CLKOUT_SEL_MCGIRCLK_CLK);
 }
 
 /*******************************************************************************

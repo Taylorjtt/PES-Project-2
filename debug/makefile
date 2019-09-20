@@ -90,7 +90,6 @@ Project_2.o:./src/main.o ./src/LED/RGB.o
 	$(LL) $(LFLG) -o "Project_2.o" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
-	$(MAKE) --no-print-directory post-build
 
 # Tool invocations
 Project_2.axf: $(OBJS) $(USER_OBJS)

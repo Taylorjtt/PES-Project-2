@@ -12,6 +12,7 @@
 #include "clock_config.h"
 #include "MKL25Z4.h"
 #include "fsl_debug_console.h"
+#include "fsl_rtc.h"
 #include "TSS/touch.h"
 
 #define RED_BASE GPIOB
@@ -22,6 +23,7 @@
 
 #define BLUE_BASE GPIOD
 #define BLUE_PIN 1U
+rtc_datetime_t* datetime;
 
 #else
 #include <stdint.h>
@@ -119,7 +121,20 @@ void initFreedom(void)
      * The board is running at 48MZ therefore 480 ticks equals 10 microsecond
      */
     SysTick_Config(480);
-
+    rtc_config_t* config = malloc(sizeof(rtc_config_t));
+    /* Wakeup pin will assert if the RTC interrupt asserts or if the wakeup pin is turned on */
+    config->wakeupSelect = true;
+    /* Registers cannot be written when locked */
+    config->updateMode = true;
+    /* Non-supervisor mode write accesses are not supported and will generate a bus error */
+    config->supervisorAccess = true;
+    /* Compensation interval used by the crystal compensation logic */
+    config->compensationInterval = 0;
+    /* Compensation time used by the crystal compensation logic */
+    config->compensationTime = 0;
+    RTC_Init(RTC, config);
+    RTC_StartTimer(RTC);
+   datetime = malloc(sizeof(rtc_datetime_t));
 }
 #else
 uint32_t getTimeInMicroseconds()
@@ -135,6 +150,8 @@ void printDebug()
 	#ifdef FREEDOM
 	debugDelta = usecs - lastDebugTime;
 	lastDebugTime = usecs;
+	RTC_GetDatetime(RTC,datetime);
+	PRINTF("\t%02d:%02d:%02d",datetime->hour,datetime->minute,datetime->second);
 	PRINTF("\t%d\n\r",debugDelta/1000);
 	#else
 	printf("\t");

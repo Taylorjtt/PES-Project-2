@@ -48,6 +48,7 @@ BOARD_InitPins:
   - {pin_num: '1', peripheral: RTC, signal: CLKOUT, pin_signal: PTE0/UART1_TX/RTC_CLKOUT/CMP0_OUT/I2C1_SDA}
   - {pin_num: '51', peripheral: TSI0, signal: 'CH, 9', pin_signal: TSI0_CH9/PTB16/SPI1_MOSI/UART0_RX/TPM_CLKIN0/SPI1_MISO}
   - {pin_num: '52', peripheral: TSI0, signal: 'CH, 10', pin_signal: TSI0_CH10/PTB17/SPI1_MISO/UART0_TX/TPM_CLKIN1/SPI1_MOSI}
+  - {pin_num: '58', peripheral: SIM, signal: CLKOUT, pin_signal: PTC3/LLWU_P7/UART1_RX/TPM0_CH2/CLKOUTa}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -112,6 +113,9 @@ void BOARD_InitPins(void)
 
     /* PORTC1 (pin 56) is configured as RTC_CLKIN */
     PORT_SetPinMux(PORTC, 1U, kPORT_MuxAsGpio);
+
+    /* PORTC3 (pin 58) is configured as CLKOUTa */
+    PORT_SetPinMux(PORTC, 3U, kPORT_MuxAlt5);
 
     /* PORTD1 (pin 74) is configured as PTD1 */
     PORT_SetPinMux(BOARD_INITPINS_LED_BLUE_PORT, BOARD_INITPINS_LED_BLUE_PIN, kPORT_MuxAsGpio);

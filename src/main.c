@@ -36,6 +36,7 @@ rtc_datetime_t* datetime;
 
 #include "LED/RGB.h"
 #include <stdlib.h>
+#include "main.h"
 
 
 #define TIMING_ARRAY_SIZE 20
@@ -74,9 +75,69 @@ uint32_t lastDebugTime = 0U;
 //offset for the touch sensor
 int32_t touchOffset = 0;
 
+int main(void)
+{
+	#ifdef FREEDOM
+	initFreedom();
+	//initialize the Freedom specific RGB LED object
+    rgbLED = malloc(sizeof(RGBLEDObject));
+    rgbLED = RGBLED_Constructor((void*) rgbLED, sizeof(RGBLEDObject), RED_BASE, RED_PIN, GREEN_BASE, GREEN_PIN, BLUE_BASE, BLUE_PIN);
+    #else
+    //set the initial timeInMicroseconds
+    lastDebugTime = getTimeInMicroseconds();
+    //initialize the PC specific RGB object
+    rgbLED = malloc(sizeof(RGBLEDObject));
+   	rgbLED = RGBLED_Constructor((void*) rgbLED, sizeof(RGBLEDObject));
+	#endif
 
+    // run the process TIMES_TO_RUN times
+    for(int i = 0; i < TIMES_TO_RUN; i++)
+    {
+    	// loop through the timing array
+    	for(int j = 0; j < TIMING_ARRAY_SIZE; j++)
+    	{
+    		//if j is even, turn the LED on
+    		if(j % 2 == 0)
+    		{
+    			RGBLED_set(rgbLED, red, green, blue);
+				printLEDStatus();
+    		}
+    		else //if j is odd turn the LEDS off
+    		{
+    			RGBLED_set(rgbLED, false, false, false);
+    			printLEDStatus();
 
+    		}
+    		#ifdef FREEDOM
+    		delay_ms(timing[j]);
+    		#else
+    		//change LED color every time the LED goes on AND off three times (2*3 = 6)
+    		//since the loop is zero indexed we have to add 1 to the loop count
+    		if((j + 1) % 6 == 0)
+    		{
+    			if(red)
+    			{
+    				red = false;
+    				green = true;
+    			}
+    			else if (green)
+    			{
+    				green = false;
+    				blue = true;
+    			}
+    			else if (blue)
+    			{
+    				blue = false;
+    				red = true;
+    			}
+    		}
+    		usleep(timing[j]*1000);
+    		#endif
+    	}
+    }
 
+    return 0;
+}
 #ifdef FREEDOM
 void delay_ms(uint32_t delayInMilliseconds)
 {
@@ -121,6 +182,10 @@ void initFreedom(void)
      * The board is running at 48MZ therefore 480 ticks equals 10 microsecond
      */
     SysTick_Config(480);
+
+    /*
+     * Initialize the Real time clock
+     */
     rtc_config_t* config = malloc(sizeof(rtc_config_t));
     /* Wakeup pin will assert if the RTC interrupt asserts or if the wakeup pin is turned on */
     config->wakeupSelect = true;
@@ -134,7 +199,7 @@ void initFreedom(void)
     config->compensationTime = 0;
     RTC_Init(RTC, config);
     RTC_StartTimer(RTC);
-   datetime = malloc(sizeof(rtc_datetime_t));
+    datetime = malloc(sizeof(rtc_datetime_t));
 }
 #else
 uint32_t getTimeInMicroseconds()
@@ -191,66 +256,6 @@ void printLEDStatus()
     }
     #endif	
 }
-int main(void)
-{
-	#ifdef FREEDOM
-	initFreedom();
-	//initialize the RGB LED object
-    rgbLED = malloc(sizeof(RGBLEDObject));
-    rgbLED = RGBLED_Constructor((void*) rgbLED, sizeof(RGBLEDObject), RED_BASE, RED_PIN, GREEN_BASE, GREEN_PIN, BLUE_BASE, BLUE_PIN);
-    #else
-    lastDebugTime = getTimeInMicroseconds();
-    rgbLED = malloc(sizeof(RGBLEDObject));
-   	rgbLED = RGBLED_Constructor((void*) rgbLED, sizeof(RGBLEDObject));
-	#endif
-
-    // run the process TIMES_TO_RUN times
-    for(int i = 0; i < TIMES_TO_RUN; i++)
-    {
-    	// loop through the timing array
-    	for(int j = 0; j < TIMING_ARRAY_SIZE; j++)
-    	{
-    		//if j is even, turn the LED on
-    		if(j % 2 == 0)
-    		{
-    			RGBLED_set(rgbLED, red, green, blue);
-				printLEDStatus();
-    		}
-    		else //if j is odd turn the LEDS off
-    		{
-    			RGBLED_set(rgbLED, false, false, false);
-    			printLEDStatus();
-
-    		}
-    		#ifdef FREEDOM
-    		delay_ms(timing[j]);
-    		#else
-    		if((j + 1) % 6 == 0)
-    		{
-    			if(red)
-    			{
-    				red = false;
-    				green = true;
-    			}
-    			else if (green)
-    			{
-    				green = false;
-    				blue = true;
-    			}
-    			else if (blue)
-    			{
-    				blue = false;
-    				red = true;
-    			}
-    		}
-    		usleep(timing[j]*1000);
-    		#endif
-    	}
-    }
-
-    return 0;
-}
-
 #ifdef FREEDOM
 void SysTick_Handler(void)
 {

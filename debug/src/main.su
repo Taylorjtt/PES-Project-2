@@ -1,9 +1,0 @@
-core_cm0plus.h:804:22:NVIC_SetPriority	24	static
-core_cm0plus.h:885:26:SysTick_Config	16	static
-fsl_rtc.h:308:20:RTC_StartTimer	16	static
-main.c:78:5:main	32	static
-main.c:142:6:delay_ms	32	static
-main.c:168:6:initFreedom	16	static
-main.c:213:6:printDebug	8	static
-main.c:236:6:printLEDStatus	8	static
-main.c:260:6:SysTick_Handler	8	static

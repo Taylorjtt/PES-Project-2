@@ -1,5 +1,0 @@
-fsl_gpio.h:175:20:GPIO_SetPinsOutput	16	static
-fsl_gpio.h:186:20:GPIO_ClearPinsOutput	16	static
-RGB.c:22:14:RGBLED_Constructor	32	static
-RGB.c:81:6:RGBLED_printStatus	32	static
-RGB.c:144:6:RGBLED_set	32	static

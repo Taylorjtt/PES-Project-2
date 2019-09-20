@@ -22,8 +22,12 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "../../CMSIS/MKL25Z4.h"
-#include "../../drivers/fsl_gpio.h"
+#ifdef FREEDOM
+	#include "../../CMSIS/MKL25Z4.h"
+	#include "../../drivers/fsl_gpio.h"
+#else
+	#include <stdio.h>
+#endif
 
 /**
 * @brief Structure representing an RGB LED object
@@ -36,6 +40,7 @@ typedef struct RGB_LED_OBJ
 	uint32_t greenPin;
 	uint32_t bluePin;
 
+	#ifdef FREEDOM
 	//ports
 	GPIO_Type *redPort;
 	GPIO_Type *greenPort;
@@ -45,6 +50,7 @@ typedef struct RGB_LED_OBJ
 	gpio_pin_config_t red_config;
 	gpio_pin_config_t green_config;
 	gpio_pin_config_t blue_config;
+	#endif
 
 	//keep track of which LEDS are on
 	bool red;
@@ -76,8 +82,12 @@ typedef struct RGB_LED_OBJ *RGBLEDHandle;
 *
 * @return RGBLEDHandle a pointer to an RGB_LED_Object
 */
+#ifdef FREEDOM
 RGBLEDHandle RGBLED_Constructor(void *pmemory, const size_t numbytes, GPIO_Type *redPort, uint32_t redPin,
 		GPIO_Type *greenPort, uint32_t greenPin,GPIO_Type *bluePort,uint32_t bluePin);
+#else
+RGBLEDHandle RGBLED_Constructor(void *pmemory, const size_t numbytes);
+#endif
 
 /**
 * @brief Function to turn RGB Elements on or off
@@ -95,6 +105,7 @@ RGBLEDHandle RGBLED_Constructor(void *pmemory, const size_t numbytes, GPIO_Type 
 */
 void RGBLED_set(RGBLEDHandle handle, bool red, bool green, bool blue);
 
+void RGBLED_printStatus(RGBLEDHandle handle, bool red, bool green, bool blue);
 
 
 #endif /* SRC_LED_RGB_H_ */

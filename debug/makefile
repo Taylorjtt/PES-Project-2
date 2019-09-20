@@ -15,8 +15,7 @@ OBJS += \
 ./board/board.o \
 ./board/clock_config.o \
 ./board/peripherals.o \
-./board/pin_mux.o
-OBJS += \
+./board/pin_mux.o \
 ./drivers/fsl_clock.o \
 ./drivers/fsl_common.o \
 ./drivers/fsl_flash.o \
@@ -60,15 +59,31 @@ fb_debug: Project_2.axf
 # fb_run Target
 fb_run: Project_2.axf
 
-pc_run: PRE = 
-pc_run: CFLG =
+pc_run: PRE =
+pc_run: CFLG = -O0 -fno-common -g3 -Wall -c -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)"
 pc_run: LFLG =
-pc_run: CC = gcc
-pc_run: LL = gcc
+pc_run: INC = -I../src 
+pc_run: C_SRCS =../src/main.c ../src/LED/RGB.c  
+pc_run: OBJS = ./src/main.o ./src/LED/RGB.o 
+pc_run: C_DEPS =./src/main.d ./src/LED/RGB.d
+pc_run: CC =gcc
+pc_run: LL =gcc
 pc_run: Project_2.o
 
+pc_debug: PRE = -DDB
+pc_debug: CFLG = -O0 -fno-common -g3 -Wall -c -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)"
+pc_debug: LFLG =
+pc_debug: INC = -I../src 
+pc_debug: C_SRCS =../src/main.c ../src/LED/RGB.c  
+pc_debug: OBJS = ./src/main.o ./src/LED/RGB.o 
+pc_debug: C_DEPS =./src/main.d ./src/LED/RGB.d
+pc_debug: CC =gcc
+pc_debug: LL =gcc
+pc_debug: Project_2.o
+
+
 # Tool invocations
-Project_2.o: $(OBJS) $(USER_OBJS)
+Project_2.o:./src/main.o ./src/LED/RGB.o 
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
 	$(LL) $(LFLG) -o "Project_2.o" $(OBJS) $(USER_OBJS) $(LIBS)
@@ -99,13 +114,6 @@ src/%.o: ../src/%.c
 	@echo 'Finished building: $<'
 	@echo ' '
 	
-src/LED/%.o: ../src/LED/%.c
-	@echo 'Building file: $<'
-	@echo 'Invoking: MCU C Compiler'
-	$(CC) $(PRE) $(INC) $(CFLG)  -o "$@" "$<"
-	@echo 'Finished building: $<'
-	@echo ' '
-
 CMSIS/%.o: ../CMSIS/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU C Compiler'
@@ -142,6 +150,3 @@ post-build:
 	-@echo 'Performing post-build steps'
 	-arm-none-eabi-size "Project_2.axf"; 
 	-@echo ' '
-
-.PHONY: all clean dependents post-build
-

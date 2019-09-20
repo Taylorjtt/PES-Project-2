@@ -5,19 +5,14 @@
  *      Author: jttaylor
  */
 
-
+#ifdef FREEDOM
 #include "board.h"
 #include "peripherals.h"
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "MKL25Z4.h"
 #include "fsl_debug_console.h"
-
-#include "LED/RGB.h"
 #include "TSS/touch.h"
-#include <stdlib.h>
-
-
 
 #define RED_BASE GPIOB
 #define RED_PIN 18U
@@ -28,6 +23,19 @@
 #define BLUE_BASE GPIOD
 #define BLUE_PIN 1U
 
+#else
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/time.h>
+#include <time.h>
+#endif
+
+#include "LED/RGB.h"
+#include <stdlib.h>
+
+
 #define TIMING_ARRAY_SIZE 20
 
 //amount of times to run
@@ -37,7 +45,7 @@
 const uint16_t timing[TIMING_ARRAY_SIZE] = {3000,1000,2000,600,1000,400,1000,200,500,100,500,100,500,100,1000,200,1000,400,2000,600};
 
 
-//define objects
+
 RGBLEDHandle rgbLED;
 
 //variables to keep track of LED status
@@ -64,36 +72,10 @@ uint32_t lastDebugTime = 0U;
 //offset for the touch sensor
 int32_t touchOffset = 0;
 
-void printDebug(bool on)
-{
-	debugDelta = usecs - lastDebugTime;
-	lastDebugTime = usecs;
 
-	if(debug)
-	{
-		if(red)
-		{
-			PRINTF("RED LED");
-		}
-		else if (green)
-		{
-			PRINTF("GREEN LED");
-		}
-		else if (blue)
-		{
-			PRINTF("BLUE LED");
-		}
 
-		if(on)
-		{
-			PRINTF(" ON\t%d\r\n",debugDelta/1000);
-		}
-		else
-		{
-			PRINTF(" OFF\t%d\r\n",debugDelta/1000);
-		}
-	}
-}
+
+#ifdef FREEDOM
 void delay_ms(uint32_t delayInMilliseconds)
 {
 	uint32_t entryTime = usecs;
@@ -120,8 +102,7 @@ void delay_ms(uint32_t delayInMilliseconds)
 		}
 	}
 }
-
-int main(void)
+void initFreedom(void)
 {
 	//initialization
     BOARD_InitBootPins();
@@ -139,9 +120,72 @@ int main(void)
      */
     SysTick_Config(480);
 
-    //initialize the RGB LED object
+}
+#else
+uint32_t getTimeInMicroseconds()
+{
+	//https://gist.github.com/sevko/d23646ba07c77c15fde9
+	struct timeval currentTime;
+	gettimeofday(&currentTime, NULL);
+	return currentTime.tv_sec * (uint32_t)1e6 + currentTime.tv_usec;
+}
+#endif
+void printDebug()
+{
+	#ifdef FREEDOM
+	debugDelta = usecs - lastDebugTime;
+	lastDebugTime = usecs;
+	PRINTF("\t%d\r\n",debugDelta/1000);
+	#else
+	printf("\t");
+	debugDelta = getTimeInMicroseconds();
+	debugDelta -=lastDebugTime;
+	lastDebugTime = getTimeInMicroseconds();
+
+	//https://stackoverflow.com/questions/3673226/how-to-print-time-in-format-2009-08-10-181754-811
+	char buff[100];
+    time_t now = time (0);
+    strftime (buff, 100, "%H:%M:%S", localtime (&now));
+    printf ("%s\t", buff);
+	printf("\t%d\r\n",debugDelta/1000);
+
+	#endif
+}
+void printLEDStatus()
+{
+
+    #ifdef FREEDOM
+   
+    if(debug)
+    {
+    	RGBLED_printStatus(rgbLED,red,green,blue);
+    	printDebug();
+    }
+    #else
+    RGBLED_printStatus(rgbLED,red,green,blue);
+
+    if(debug)
+    {
+    	printDebug();
+    }
+    else
+    {
+    	printf("\r\n");
+    }
+    #endif	
+}
+int main(void)
+{
+	#ifdef FREEDOM
+	initFreedom();
+	//initialize the RGB LED object
     rgbLED = malloc(sizeof(RGBLEDObject));
     rgbLED = RGBLED_Constructor((void*) rgbLED, sizeof(RGBLEDObject), RED_BASE, RED_PIN, GREEN_BASE, GREEN_PIN, BLUE_BASE, BLUE_PIN);
+    #else
+    lastDebugTime = getTimeInMicroseconds();
+    rgbLED = malloc(sizeof(RGBLEDObject));
+   	rgbLED = RGBLED_Constructor((void*) rgbLED, sizeof(RGBLEDObject));
+	#endif
 
     // run the process TIMES_TO_RUN times
     for(int i = 0; i < TIMES_TO_RUN; i++)
@@ -153,23 +197,48 @@ int main(void)
     		if(j % 2 == 0)
     		{
     			RGBLED_set(rgbLED, red, green, blue);
-    			printDebug(true);
+				printLEDStatus();
     		}
     		else //if j is odd turn the LEDS off
     		{
     			RGBLED_set(rgbLED, false, false, false);
-    			printDebug(false);
+    			printLEDStatus();
+
     		}
+    		#ifdef FREEDOM
     		delay_ms(timing[j]);
+    		#else
+    		if((j + 1) % 6 == 0)
+    		{
+    			if(red)
+    			{
+    				red = false;
+    				green = true;
+    			}
+    			else if (green)
+    			{
+    				green = false;
+    				blue = true;
+    			}
+    			else if (blue)
+    			{
+    				blue = false;
+    				red = true;
+    			}
+    		}
+    		usleep(timing[j]*1000);
+    		#endif
     	}
     }
 
-    return 0 ;
+    return 0;
 }
 
+#ifdef FREEDOM
 void SysTick_Handler(void)
 {
 	//10 microseconds per tick
 	usecs += 10;
 }
+#endif
 

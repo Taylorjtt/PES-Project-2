@@ -1,4 +1,5 @@
-
+#John Taylor
+#Project 2 Makefile
 C_SRCS = \
 ../board/*.c \
 ../CMSIS/*.c \

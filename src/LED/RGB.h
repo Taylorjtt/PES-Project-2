@@ -87,6 +87,17 @@ typedef struct RGB_LED_OBJ *RGBLEDHandle;
 RGBLEDHandle RGBLED_Constructor(void *pmemory, const size_t numbytes, GPIO_Type *redPort, uint32_t redPin,
 		GPIO_Type *greenPort, uint32_t greenPin,GPIO_Type *bluePort,uint32_t bluePin);
 #else
+/**
+* @brief Constructor for RGB LED object
+*
+* Given a chunk of memory, the size of an RGB_LED object this
+* function initializes a virtual LED and returns a pointer to the object
+*
+* @param pmemory	The pointer to the memory that this object will use
+* @param numbytes	The expected size of the object
+*
+* @return RGBLEDHandle a pointer to an RGB_LED_Object
+*/
 RGBLEDHandle RGBLED_Constructor(void *pmemory, const size_t numbytes);
 #endif
 
@@ -106,6 +117,20 @@ RGBLEDHandle RGBLED_Constructor(void *pmemory, const size_t numbytes);
 */
 void RGBLED_set(RGBLEDHandle handle, bool red, bool green, bool blue);
 
+/**
+* @brief Function to print the status of the RGB object
+*
+* Given boolean values representing which LEDS you want to print this function
+* prints the LED color and whether it is on or not
+*
+* @param RGBLEDHandle	the RGB_LED_Object Pointer
+*
+* @param red	boolean representing whether or not to print info about the red LED
+* @param green	boolean representing whether or not to print info about the green LED
+* @param blue  	boolean representing whether or not to print info about the blue LED
+*
+* @return void
+*/
 void RGBLED_printStatus(RGBLEDHandle handle, bool red, bool green, bool blue);
 
 

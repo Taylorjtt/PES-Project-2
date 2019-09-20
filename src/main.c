@@ -1,10 +1,21 @@
+/*****************************************************************************
+* Copyright (C) 2019 by John Taylor
+*
+* Redistribution, modification or use of this software in source or binary
+* forms is permitted as long as the files maintain this copyright. Users are
+* permitted to modify this and use it to learn about the field of embedded
+* software. John Taylor and the University of Colorado are not liable for
+* any misuse of this material.
+*
+*****************************************************************************/
 /*
- * main.c
+ * @file main.c
+ * @brief Main Driver file for PES project 2
  *
- *  Created on: Sep 18, 2019
- *      Author: jttaylor
+ *  @author John Taylor
+ * 	@date Sep 18, 2019
+ *
  */
-
 #ifdef FREEDOM
 #include "board.h"
 #include "peripherals.h"

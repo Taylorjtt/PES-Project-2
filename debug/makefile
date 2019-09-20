@@ -53,10 +53,11 @@ CFLG = -O0 -fno-common -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-s
 LFLG = -nostdlib -Xlinker -Map="Project_2.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m0plus -mthumb -T linkerfile.ld
 
 # fb_debug Target
-fb_debug: CC += -DDB
+fb_debug: CC += -DDB -DFREEDOM
 fb_debug: Project_2.axf 
 
 # fb_run Target
+fb_run: CC += -DFREEDOM
 fb_run: Project_2.axf
 
 pc_run: PRE =

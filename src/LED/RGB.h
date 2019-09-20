@@ -25,6 +25,7 @@
 #ifdef FREEDOM
 	#include "../../CMSIS/MKL25Z4.h"
 	#include "../../drivers/fsl_gpio.h"
+	#include "fsl_debug_console.h"
 #else
 	#include <stdio.h>
 #endif

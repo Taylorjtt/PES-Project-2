@@ -1,0 +1,9 @@
+fsl_tsi_v4.h:370:24:TSI_GetStatusFlags	16	static
+fsl_tsi_v4.h:442:20:TSI_EnableModule	16	static
+fsl_tsi_v4.h:485:20:TSI_EnableHardwareTriggerScan	16	static
+fsl_tsi_v4.h:503:20:TSI_StartSoftwareTrigger	16	static
+fsl_tsi_v4.h:515:20:TSI_SetMeasuredChannelNumber	16	static
+fsl_tsi_v4.h:584:24:TSI_GetCounter	16	static
+touch.c:24:6:initializeTouch	24	static
+touch.c:37:9:getTouchValue	16	static
+touch.c:61:15:getSection	16	static

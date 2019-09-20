@@ -135,7 +135,7 @@ void printDebug()
 	#ifdef FREEDOM
 	debugDelta = usecs - lastDebugTime;
 	lastDebugTime = usecs;
-	PRINTF("\t%d\r\n",debugDelta/1000);
+	PRINTF("\t%d\n\r",debugDelta/1000);
 	#else
 	printf("\t");
 	debugDelta = getTimeInMicroseconds();

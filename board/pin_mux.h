@@ -42,14 +42,15 @@ void BOARD_InitBootPins(void);
 
 /*! @name PORTA2 (number 28), J1[4]/D1/UART0_TX
   @{ */
-#define BOARD_INITPINS_DEBUG_UART_TX_PERIPHERAL UART0          /*!<@brief Device name: UART0 */
-#define BOARD_INITPINS_DEBUG_UART_TX_SIGNAL TX                 /*!<@brief UART0 signal: TX */
-#define BOARD_INITPINS_DEBUG_UART_TX_PORT PORTA                /*!<@brief PORT device name: PORTA */
-#define BOARD_INITPINS_DEBUG_UART_TX_PIN 2U                    /*!<@brief PORTA pin index: 2 */
-#define BOARD_INITPINS_DEBUG_UART_TX_PIN_NAME UART0_TX         /*!<@brief Pin name */
-#define BOARD_INITPINS_DEBUG_UART_TX_LABEL "J1[4]/D1/UART0_TX" /*!<@brief Label */
-#define BOARD_INITPINS_DEBUG_UART_TX_NAME "DEBUG_UART_TX"      /*!<@brief Identifier name */
-                                                               /* @} */
+#define BOARD_INITPINS_DEBUG_UART_TX_PERIPHERAL UART0                   /*!<@brief Device name: UART0 */
+#define BOARD_INITPINS_DEBUG_UART_TX_SIGNAL TX                          /*!<@brief UART0 signal: TX */
+#define BOARD_INITPINS_DEBUG_UART_TX_PORT PORTA                         /*!<@brief PORT device name: PORTA */
+#define BOARD_INITPINS_DEBUG_UART_TX_PIN 2U                             /*!<@brief PORTA pin index: 2 */
+#define BOARD_INITPINS_DEBUG_UART_TX_PIN_NAME UART0_TX                  /*!<@brief Pin name */
+#define BOARD_INITPINS_DEBUG_UART_TX_LABEL "J1[4]/D1/UART0_TX"          /*!<@brief Label */
+#define BOARD_INITPINS_DEBUG_UART_TX_NAME "DEBUG_UART_TX"               /*!<@brief Identifier name */
+#define BOARD_INITPINS_DEBUG_UART_TX_DIRECTION kPIN_MUX_DirectionOutput /*!<@brief Direction */
+                                                                        /* @} */
 
 /*! @name PORTA1 (number 27), J1[2]/D0/UART0_RX
   @{ */

@@ -58,6 +58,7 @@ board: FRDM-KL25Z
 #define SIM_OSC32KSEL_RTC32KCLK_CLK                       2U  /*!< OSC32KSEL select: RTC32KCLK clock (32.768kHz) */
 #define SIM_PLLFLLSEL_MCGFLLCLK_CLK                       0U  /*!< PLLFLL select: MCGFLLCLK clock */
 #define SIM_PLLFLLSEL_MCGPLLCLK_CLK                       1U  /*!< PLLFLL select: MCGPLLCLK clock */
+#define SIM_UART_CLK_SEL_OSCERCLK_CLK                     2U  /*!< UART clock select: OSCERCLK clock */
 
 /*******************************************************************************
  * Variables
@@ -125,6 +126,7 @@ outputs:
 - {id: OSCERCLK.outFreq, value: 8 MHz}
 - {id: PLLFLLCLK.outFreq, value: 48 MHz}
 - {id: System_clock.outFreq, value: 48 MHz}
+- {id: UART0CLK.outFreq, value: 8 MHz}
 settings:
 - {id: MCGMode, value: PEE}
 - {id: CLKOUTConfig, value: 'yes'}
@@ -146,8 +148,9 @@ settings:
 - {id: SIM.OUTDIV1.scale, value: '2'}
 - {id: SIM.PLLFLLSEL.sel, value: SIM.MCGPLLCLK_DIV2}
 - {id: SIM.TPMSRCSEL.sel, value: SIM.PLLFLLSEL}
-- {id: SIM.UART0SRCSEL.sel, value: SIM.PLLFLLSEL}
+- {id: SIM.UART0SRCSEL.sel, value: OSC.OSCERCLK}
 - {id: SIM.USBSRCSEL.sel, value: SIM.PLLFLLSEL}
+- {id: UART0ClkConfig, value: 'yes'}
 sources:
 - {id: OSC.OSC.outFreq, value: 8 MHz, enabled: true}
 - {id: SIM.RTC_CLK_EXT_IN.outFreq, value: 32.768 kHz, enabled: true}
@@ -218,6 +221,8 @@ void BOARD_BootClockRUN(void)
     CLOCK_CONFIG_SetRtcClock();
     /* Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKRUN_CORE_CLOCK;
+    /* Set UART0 clock source. */
+    CLOCK_SetLpsci0Clock(SIM_UART_CLK_SEL_OSCERCLK_CLK);
     /* Set CLKOUT source. */
     CLOCK_SetClkOutClock(SIM_CLKOUT_SEL_MCGIRCLK_CLK);
 }

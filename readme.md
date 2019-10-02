@@ -1,6 +1,7 @@
 # Project 2
 **John Taylor**
-
+## Videos
+I was able to watch all of the videos on my linux machine. You will have to unzip the "live demo" because it was too large to upload by itself.
 ## Build Notes 
 This project runs on both the *FRDM-KL25Z* development board as well as on *Ubuntu 18.04.3 LTS (Bionic Beaver)*.
 There are several make targets that accomplish slightly different goals. All of the make targets can be run directly from the MCUExpresso IDE
